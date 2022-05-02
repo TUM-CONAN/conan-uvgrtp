@@ -26,7 +26,7 @@ find_package(uvgrtp REQUIRED)
 
 add_executable(sending ./sending.cpp)
 target_link_libraries(sending
-    uvgrtp
+    CONAN_PKG::uvgrtp
 )
 set_target_properties(sending PROPERTIES
     CXX_STANDARD_REQUIRED ON

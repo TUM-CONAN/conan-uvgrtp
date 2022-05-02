@@ -93,6 +93,11 @@ class uvgRTPConan(ConanFile):
         for patch in []: #[{"base_path": "source_subfolder","patch_file":"patches/2.0.0-fix-cpptoml-cmake.patch"},]:
             tools.patch(**patch)
 
+        tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
+            "install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uvgrtp.pc DESTINATION ${PKG_CONFIG_PATH}/)",
+            "#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uvgrtp.pc DESTINATION ${PKG_CONFIG_PATH}/)"
+            )
+
     def config_options(self):
         pass
     
@@ -133,7 +138,9 @@ class uvgRTPConan(ConanFile):
         return self._cmake
 
     def source(self):
-        tools.get("https://github.com/ultravideo/uvgRTP/archive/refs/tags/v%s.tar.gz" % self.version, strip_root=True,
+        # tools.get("https://github.com/ultravideo/uvgRTP/archive/refs/tags/v%s.tar.gz" % self.version, strip_root=True,
+        #           destination=self._source_subfolder)
+        tools.get("https://github.com/ultravideo/uvgRTP/archive/refs/heads/master.tar.gz", strip_root=True,
                   destination=self._source_subfolder)
 
     def build(self):
@@ -145,10 +152,11 @@ class uvgRTPConan(ConanFile):
         cmake = self._configure_cmake()
         cmake.install()
         self.copy("LICENSE", src=self._source_subfolder, dst="licenses")
-        self.copy("*.cmake", src=os.path.join(self._source_subfolder, "iceoryx_hoofs", "cmake"), dst="cmake")
+        self.copy("*.hh", src=os.path.join(self._source_subfolder, "include"), dst="include")
+        # self.copy("*.cmake", src=os.path.join(self._source_subfolder, "iceoryx_hoofs", "cmake"), dst="cmake")
         # tools.rmdir(self._pkg_share)
         # tools.rmdir(self._pkg_cmake)
-        tools.mkdir(self._pkg_res)
+        # tools.mkdir(self._pkg_res)
         # tools.rmdir(self._pkg_etc)
         # for alias, aliased in self._target_aliases.items():
         #     cmake_file = "conan-official-{}-targets.cmake".format(
