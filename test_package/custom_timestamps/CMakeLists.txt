@@ -1,3 +1,4 @@
+# Copyright (c) 2020 by Robert Bosch GmbH. All rights reserved.
 # Copyright (c) 2021 by Apex.AI Inc. All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,16 +15,27 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Build icehello example
+# Build singleprocess example
+cmake_minimum_required(VERSION 3.16)
+project(example_custom_timestamps)
 
-cmake_minimum_required(VERSION 3.5)
-project(examples)
+include(GNUInstallDirs)
 
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+find_package(uvgrtp REQUIRED)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_subdirectory(sending)
-add_subdirectory(custom_timestamps)
+add_executable(custom_timestamps ./custom_timestamps.cpp)
+target_link_libraries(custom_timestamps
+    CONAN_PKG::uvgrtp
+)
+set_target_properties(custom_timestamps PROPERTIES
+    CXX_STANDARD_REQUIRED ON
+    CXX_STANDARD 17
+    POSITION_INDEPENDENT_CODE ON
+)
+
+
+install(
+    TARGETS custom_timestamps
+    RUNTIME DESTINATION bin
+)
