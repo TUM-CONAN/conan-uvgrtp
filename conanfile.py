@@ -15,11 +15,13 @@ class uvgRTPConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     options = {
          "shared":          [True, False],
-         "with_crypto":     [True, False]
+         "with_crypto":     [True, False], 
+         "fPIC": [True, False]
     }
     default_options = {
         "shared":      False,
-        "with_crypto": True
+        "with_crypto": True, 
+        "fPIC": True
     }
     generators = ["cmake", "cmake_find_package"]
     exports_sources = ["patches/**","CMakeLists.txt"]
@@ -98,6 +100,10 @@ class uvgRTPConan(ConanFile):
             "#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uvgrtp.pc DESTINATION ${PKG_CONFIG_PATH}/)"
             )
 
+    def configure(self):
+        if self.settings.compiler == 'Visual Studio':
+            del self.options.fPIC
+
     def config_options(self):
         pass
     
@@ -134,6 +140,7 @@ class uvgRTPConan(ConanFile):
             return self._cmake
         self._cmake = CMake(self)
         self._cmake.definitions["DISABLE_CRYPTO"] = "ON" if not self.options.with_crypto else "OFF"
+        self._cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         self._cmake.configure()
         return self._cmake
 
