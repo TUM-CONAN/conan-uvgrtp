@@ -96,8 +96,13 @@ class uvgRTPConan(ConanFile):
             tools.patch(**patch)
 
         tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
-            "install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uvgrtp.pc DESTINATION ${PKG_CONFIG_PATH}/)",
-            "#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/uvgrtp.pc DESTINATION ${PKG_CONFIG_PATH}/)"
+            "DESTINATION /usr/local/lib",
+            "DESTINATION ${CMAKE_INSTALL_LIBDIR}"
+            )
+
+        tools.replace_in_file(os.path.join(self._source_subfolder, "CMakeLists.txt"),
+            "install(DIRECTORY include/ DESTINATION /usr/local/include/uvgrtp",
+            "install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/uvgrtp"
             )
 
     def configure(self):
@@ -145,9 +150,7 @@ class uvgRTPConan(ConanFile):
         return self._cmake
 
     def source(self):
-        # tools.get("https://github.com/ultravideo/uvgRTP/archive/refs/tags/v%s.tar.gz" % self.version, strip_root=True,
-        #           destination=self._source_subfolder)
-        tools.get("https://github.com/ultravideo/uvgRTP/archive/refs/heads/master.tar.gz", strip_root=True,
+        tools.get("https://github.com/ultravideo/uvgRTP/archive/refs/tags/v%s.tar.gz" % self.version, strip_root=True,
                   destination=self._source_subfolder)
 
     def build(self):
