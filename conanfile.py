@@ -140,7 +140,8 @@ class uvgRTPConan(ConanFile):
             return self._cmake
         self._cmake = CMake(self)
         self._cmake.definitions["DISABLE_CRYPTO"] = "ON" if not self.options.with_crypto else "OFF"
-        self._cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
+        if self.settings.compiler != 'Visual Studio':
+            self._cmake.definitions['CMAKE_POSITION_INDEPENDENT_CODE'] = self.options.fPIC
         self._cmake.configure()
         return self._cmake
 
