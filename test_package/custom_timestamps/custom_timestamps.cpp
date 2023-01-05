@@ -1,5 +1,6 @@
 #include <uvgrtp/lib.hh>
 
+#include <cstring>
 #include <cstdlib>
 #include <iostream>
 
