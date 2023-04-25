@@ -1,9 +1,30 @@
-import os
-from conans import ConanFile, CMake
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4
 
-class IceoryxTestConan(ConanFile):
+from conan import ConanFile
+from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout, CMakeDeps
+from conan.tools.build import can_run
+import os
+
+
+class TestPackageConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    generators = ["cmake","cmake_find_package_multi"]
+    generators = "VirtualRunEnv"
+    test_type = "explicit"
+
+    def requirements(self):
+        self.requires(self.tested_reference_str)
+
+    def layout(self):
+        cmake_layout(self)
+
+    def generate(self):
+        tc = CMakeToolchain(self)
+        tc.generate()
+
+        deps = CMakeDeps(self)
+        deps.generate()
 
     def build(self):
         cmake = CMake(self)
@@ -11,11 +32,8 @@ class IceoryxTestConan(ConanFile):
         cmake.build()
 
     def test(self):
-        # ToDo : add an executable which can be 
-        # executed in container. 
-        # currently seems shared memory in container is 
-        # a bad idea (checked on 3 different linux devices
-        # always ok - but in container get 
-        # "fatal SIGBUS signal appeared caused by memset")
-        path, dirs, files = next(os.walk("bin"))
-        print("All %d example files are present" % (len(files)))
+        if can_run(self):
+            cmd = os.path.join(self.cpp.build.bindir, "custom_timestamps", "custom_timestamps")
+            self.run(cmd, env="conanrun")
+            cmd = os.path.join(self.cpp.build.bindir, "sending", "sending")
+            self.run(cmd, env="conanrun")

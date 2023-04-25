@@ -1,41 +1,20 @@
-# Copyright (c) 2020 by Robert Bosch GmbH. All rights reserved.
-# Copyright (c) 2021 by Apex.AI Inc. All rights reserved.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
-# SPDX-License-Identifier: Apache-2.0
+cmake_minimum_required(VERSION 3.15)
+cmake_policy(SET CMP0074 NEW)
 
-# Build singleprocess example
-cmake_minimum_required(VERSION 3.16)
-project(example_custom_timestamps)
-
+project(custom_timestamps)
 include(GNUInstallDirs)
 
-find_package(uvgrtp REQUIRED)
+find_package(uvgrtp REQUIRED CONFIG)
+add_executable(${PROJECT_NAME} custom_timestamps.cpp)
+target_link_libraries(${PROJECT_NAME} uvgrtp::uvgrtp)
 
-
-add_executable(custom_timestamps ./custom_timestamps.cpp)
-target_link_libraries(custom_timestamps
-    CONAN_PKG::uvgrtp
-)
-set_target_properties(custom_timestamps PROPERTIES
+set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD_REQUIRED ON
     CXX_STANDARD 17
     POSITION_INDEPENDENT_CODE ON
 )
 
-
 install(
-    TARGETS custom_timestamps
+    TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION bin
 )
